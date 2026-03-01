@@ -65,7 +65,7 @@
 		<span class="badge {envBadgeClass(data.environment)}">{data.environment}</span>
 
 		<nav class="stage-nav">
-			{#each stages as stage}
+			{#each stages as stage (stage.label)}
 				<a
 					href="https://{stage.prefix}.{typeof window !== 'undefined' ? window.location.hostname.split('.').slice(-2).join('.') : 'example.com'}"
 					class="stage-pill"
