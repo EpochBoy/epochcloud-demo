@@ -35,6 +35,14 @@ FROM docker.io/library/node:22-alpine
 # Install ca-certificates for HTTPS
 RUN apk --no-cache add ca-certificates
 
+# Build info — propagated from builder stage for $env/dynamic/public
+ARG VERSION=dev
+ARG COMMIT=unknown
+ARG BUILD_TIME=unknown
+ENV PUBLIC_VERSION=${VERSION}
+ENV PUBLIC_COMMIT=${COMMIT}
+ENV PUBLIC_BUILD_TIME=${BUILD_TIME}
+
 WORKDIR /app
 
 # Copy built app and production dependencies

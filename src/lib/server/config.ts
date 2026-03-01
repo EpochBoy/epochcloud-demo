@@ -76,5 +76,13 @@ export const config = {
 		get enabled() {
 			return !!env.BETTERAUTH_URL;
 		}
+	},
+
+	// GO Feature Flag relay proxy
+	gofeatureflag: {
+		url: env.GOFEATUREFLAG_URL || '',
+		get enabled() {
+			return !!env.GOFEATUREFLAG_URL;
+		}
 	}
 };

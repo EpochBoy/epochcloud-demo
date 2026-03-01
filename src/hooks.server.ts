@@ -67,6 +67,9 @@ function metricPath(pathname: string): string {
 	if (pathname.startsWith('/cache/get')) return '/cache/get';
 	if (pathname.startsWith('/defectdojo/status')) return '/defectdojo/status';
 	if (pathname.startsWith('/email/send')) return '/email/send';
+	if (pathname.startsWith('/features/status')) return '/features/status';
+	if (pathname.startsWith('/features/evaluate')) return '/features/evaluate';
+	if (pathname.startsWith('/features/all')) return '/features/all';
 	return pathname;
 }
 

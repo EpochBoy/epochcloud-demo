@@ -19,6 +19,16 @@
 	let authLoginEmail = $state('');
 	let authLoginPass = $state('');
 
+	// GO Feature Flag state
+	let ffStatusText = $state('Not checked');
+	let ffStatusOk = $state(false);
+	let ffResult = $state('');
+	let ffResultOk = $state(false);
+	let ffResultVisible = $state(false);
+	let ffFlagName = $state('maintenance-mode');
+	let ffUserId = $state('user-123');
+	let ffAllUserId = $state('user-456');
+
 	async function sendEmail() {
 		if (!emailInput) return;
 		emailStatus = 'Sending...';
@@ -102,6 +112,52 @@
 			);
 		} catch (err) {
 			showAuthResult(`Network error: ${err}`, false);
+		}
+	}
+
+	async function checkFfStatus() {
+		ffStatusText = 'Checking...';
+		try {
+			const resp = await fetch('/features/status');
+			const d = await resp.json();
+			if (d.connected) {
+				ffStatusText = `● Connected — ${d.flags_available || 0} flags`;
+				ffStatusOk = true;
+			} else {
+				ffStatusText = `● Disconnected${d.error ? ' — ' + d.error : ''}`;
+				ffStatusOk = false;
+			}
+		} catch (err) {
+			ffStatusText = `● Error: ${err}`;
+			ffStatusOk = false;
+		}
+	}
+
+	function showFfResult(msg: string, ok: boolean) {
+		ffResult = msg;
+		ffResultOk = ok;
+		ffResultVisible = true;
+	}
+
+	async function ffEvaluate() {
+		try {
+			const resp = await fetch(
+				`/features/evaluate?flag=${encodeURIComponent(ffFlagName)}&user=${encodeURIComponent(ffUserId)}`
+			);
+			const d = await resp.json();
+			showFfResult(JSON.stringify(d, null, 2), !d.error);
+		} catch (err) {
+			showFfResult(`Network error: ${err}`, false);
+		}
+	}
+
+	async function ffEvalAll() {
+		try {
+			const resp = await fetch(`/features/all?user=${encodeURIComponent(ffAllUserId)}`);
+			const d = await resp.json();
+			showFfResult(JSON.stringify(d, null, 2), !d.error);
+		} catch (err) {
+			showFfResult(`Network error: ${err}`, false);
 		}
 	}
 
@@ -319,6 +375,43 @@
 				{/if}
 			{:else}
 				<p class="disabled-note">⚠ Not connected (BETTERAUTH_URL not set)</p>
+			{/if}
+		</div>
+
+		<!-- GO Feature Flag -->
+		<div class="card">
+			<h2>🚩 Feature Flags</h2>
+			<p class="card-desc">Evaluate feature flags in real-time via GO Feature Flag relay proxy</p>
+
+			<div class="auth-status-row">
+				<button onclick={checkFfStatus} class="auth-status-btn">Check Status 🔗</button>
+				<span class="auth-indicator" class:ok={ffStatusOk}>{ffStatusText}</span>
+			</div>
+
+			{#if data.features.gofeatureflag}
+				<div class="auth-forms">
+					<div class="auth-form-col">
+						<p class="auth-form-label">Evaluate Single Flag</p>
+						<select bind:value={ffFlagName} class="auth-input">
+							<option value="maintenance-mode">maintenance-mode</option>
+							<option value="new-dashboard-layout">new-dashboard-layout</option>
+							<option value="dark-mode">dark-mode</option>
+							<option value="welcome-banner">welcome-banner</option>
+						</select>
+						<input type="text" bind:value={ffUserId} placeholder="User ID" class="auth-input" />
+						<button onclick={ffEvaluate} class="auth-btn register">Evaluate 🎯</button>
+					</div>
+					<div class="auth-form-col">
+						<p class="auth-form-label">Evaluate All Flags</p>
+						<input type="text" bind:value={ffAllUserId} placeholder="User ID" class="auth-input" />
+						<button onclick={ffEvalAll} class="auth-btn login">Evaluate All 🏁</button>
+					</div>
+				</div>
+				{#if ffResultVisible}
+					<pre class="ff-result" class:ok={ffResultOk} class:error={!ffResultOk}>{ffResult}</pre>
+				{/if}
+			{:else}
+				<p class="disabled-note">⚠ Not connected (GOFEATUREFLAG_URL not set)</p>
 			{/if}
 		</div>
 
@@ -691,6 +784,27 @@
 	}
 
 	.auth-result.error {
+		background: rgba(255, 100, 100, 0.2);
+		color: #ff6b6b;
+	}
+
+	.ff-result {
+		padding: 0.75rem 1rem;
+		border-radius: 8px;
+		font-size: 0.8rem;
+		font-family: monospace;
+		white-space: pre-wrap;
+		max-height: 200px;
+		overflow-y: auto;
+		margin: 0;
+	}
+
+	.ff-result.ok {
+		background: rgba(0, 210, 106, 0.2);
+		color: #00d26a;
+	}
+
+	.ff-result.error {
 		background: rgba(255, 100, 100, 0.2);
 		color: #ff6b6b;
 	}

@@ -17,7 +17,8 @@ export const load: PageServerLoad = async () => {
 			valkey: config.valkey.enabled,
 			defectdojo: config.defectdojo.enabled,
 			smtp: config.smtp.enabled,
-			betterauth: config.betterauth.enabled
+			betterauth: config.betterauth.enabled,
+			gofeatureflag: config.gofeatureflag.enabled
 		}
 	};
 };
