@@ -7,6 +7,18 @@
 	let emailStatus = $state('');
 	let emailError = $state(false);
 
+	// BetterAuth state
+	let authStatusText = $state('Not checked');
+	let authStatusOk = $state(false);
+	let authResult = $state('');
+	let authResultOk = $state(false);
+	let authResultVisible = $state(false);
+	let authRegName = $state('');
+	let authRegEmail = $state('');
+	let authRegPass = $state('');
+	let authLoginEmail = $state('');
+	let authLoginPass = $state('');
+
 	async function sendEmail() {
 		if (!emailInput) return;
 		emailStatus = 'Sending...';
@@ -25,6 +37,71 @@
 		} catch (err) {
 			emailStatus = `✗ ${err}`;
 			emailError = true;
+		}
+	}
+
+	async function checkAuthStatus() {
+		authStatusText = 'Checking...';
+		try {
+			const resp = await fetch('/auth/status');
+			const d = await resp.json();
+			if (d.connected) {
+				authStatusText = `● Connected — ${d.health}`;
+				authStatusOk = true;
+			} else {
+				authStatusText = `● Disconnected${d.error ? ' — ' + d.error : ''}`;
+				authStatusOk = false;
+			}
+		} catch (err) {
+			authStatusText = `● Error: ${err}`;
+			authStatusOk = false;
+		}
+	}
+
+	function showAuthResult(msg: string, ok: boolean) {
+		authResult = msg;
+		authResultOk = ok;
+		authResultVisible = true;
+	}
+
+	async function authRegister() {
+		try {
+			const resp = await fetch('/auth/register', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name: authRegName, email: authRegEmail, password: authRegPass })
+			});
+			const d = await resp.json();
+			showAuthResult(d.message, d.success);
+		} catch (err) {
+			showAuthResult(`Network error: ${err}`, false);
+		}
+	}
+
+	async function authLogin() {
+		try {
+			const resp = await fetch('/auth/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email: authLoginEmail, password: authLoginPass })
+			});
+			const d = await resp.json();
+			showAuthResult(d.message, d.success);
+		} catch (err) {
+			showAuthResult(`Network error: ${err}`, false);
+		}
+	}
+
+	async function authSession() {
+		try {
+			const resp = await fetch('/auth/session');
+			const d = await resp.json();
+			showAuthResult(
+				d.message + (d.data ? ' — ' + JSON.stringify(d.data) : ''),
+				d.success
+			);
+		} catch (err) {
+			showAuthResult(`Network error: ${err}`, false);
 		}
 	}
 
@@ -214,13 +291,33 @@
 		<div class="card">
 			<h2>🔐 BetterAuth</h2>
 			<p class="card-desc">Application auth server for customer-facing apps</p>
-			<div class="icon-list">
-				<div class="icon-item">👤 User Registration</div>
-				<div class="icon-item">🔑 Login & Sessions</div>
-				<div class="icon-item">🏢 Organizations</div>
-				<div class="icon-item">🔒 Keycloak SSO</div>
+
+			<div class="auth-status-row">
+				<button onclick={checkAuthStatus} class="auth-status-btn">Check Status 🔗</button>
+				<span class="auth-indicator" class:ok={authStatusOk}>{authStatusText}</span>
 			</div>
-			{#if !data.features.betterauth}
+
+			{#if data.features.betterauth}
+				<div class="auth-forms">
+					<div class="auth-form-col">
+						<p class="auth-form-label">Register</p>
+						<input type="text" bind:value={authRegName} placeholder="Name" class="auth-input" />
+						<input type="email" bind:value={authRegEmail} placeholder="Email" class="auth-input" />
+						<input type="password" bind:value={authRegPass} placeholder="Password" class="auth-input" />
+						<button onclick={authRegister} class="auth-btn register">Register ✨</button>
+					</div>
+					<div class="auth-form-col">
+						<p class="auth-form-label">Login</p>
+						<input type="email" bind:value={authLoginEmail} placeholder="Email" class="auth-input" />
+						<input type="password" bind:value={authLoginPass} placeholder="Password" class="auth-input" />
+						<button onclick={authLogin} class="auth-btn login">Login 🔑</button>
+					</div>
+				</div>
+				<button onclick={authSession} class="auth-session-btn">Validate Session 🎫</button>
+				{#if authResultVisible}
+					<p class="auth-result" class:ok={authResultOk} class:error={!authResultOk}>{authResult}</p>
+				{/if}
+			{:else}
 				<p class="disabled-note">⚠ Not connected (BETTERAUTH_URL not set)</p>
 			{/if}
 		</div>
@@ -489,6 +586,112 @@
 	}
 
 	.email-status.error {
+		color: #ff6b6b;
+	}
+
+	/* BetterAuth styles */
+	.auth-status-row {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
+	}
+
+	.auth-status-btn {
+		padding: 0.5rem 1rem;
+		border-radius: 8px;
+		border: 1px solid rgba(0, 217, 255, 0.3);
+		background: rgba(0, 217, 255, 0.1);
+		color: #00d9ff;
+		font-weight: 600;
+		cursor: pointer;
+		font-size: 0.85rem;
+	}
+
+	.auth-indicator {
+		font-size: 0.85rem;
+		color: #888;
+	}
+
+	.auth-indicator.ok {
+		color: #00d26a;
+	}
+
+	.auth-forms {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.auth-form-label {
+		color: #aaa;
+		font-size: 0.8rem;
+		margin-bottom: 0.5rem;
+		font-weight: 600;
+	}
+
+	.auth-input {
+		width: 100%;
+		box-sizing: border-box;
+		margin-bottom: 0.4rem;
+		padding: 0.5rem 0.75rem;
+		border-radius: 6px;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		background: rgba(255, 255, 255, 0.05);
+		color: #fff;
+		font-size: 0.85rem;
+		outline: none;
+	}
+
+	.auth-input:focus {
+		border-color: #00d9ff;
+	}
+
+	.auth-btn {
+		width: 100%;
+		padding: 0.5rem;
+		border-radius: 6px;
+		border: none;
+		font-weight: 600;
+		cursor: pointer;
+		font-size: 0.85rem;
+		color: #1a1a2e;
+	}
+
+	.auth-btn.register {
+		background: linear-gradient(90deg, #00d9ff, #00ff88);
+	}
+
+	.auth-btn.login {
+		background: linear-gradient(90deg, #ff6b6b, #ffa07a);
+	}
+
+	.auth-session-btn {
+		width: 100%;
+		padding: 0.5rem 1rem;
+		border-radius: 6px;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		background: rgba(255, 255, 255, 0.05);
+		color: #ccc;
+		cursor: pointer;
+		font-size: 0.85rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.auth-result {
+		padding: 0.75rem 1rem;
+		border-radius: 8px;
+		font-size: 0.85rem;
+	}
+
+	.auth-result.ok {
+		background: rgba(0, 210, 106, 0.2);
+		color: #00d26a;
+	}
+
+	.auth-result.error {
+		background: rgba(255, 100, 100, 0.2);
 		color: #ff6b6b;
 	}
 
