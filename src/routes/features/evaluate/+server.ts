@@ -7,10 +7,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	const userId = url.searchParams.get('user') || 'anonymous';
 
 	if (!flagName) {
-		return Response.json(
-			{ error: "Missing 'flag' query parameter", timestamp },
-			{ status: 400 }
-		);
+		return Response.json({ error: "Missing 'flag' query parameter", timestamp }, { status: 400 });
 	}
 
 	if (!config.gofeatureflag.enabled) {
