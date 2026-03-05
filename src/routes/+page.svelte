@@ -58,7 +58,16 @@
 	let chaosResult = $state('');
 	let chaosResultOk = $state(false);
 	let chaosResultVisible = $state(false);
+	let chaosLoading = $state(false);
+	// Chaos params
 	let chaosLoadCount = $state('10');
+	let chaosDelayMs = $state('2000');
+	let chaosJitterMin = $state('100');
+	let chaosJitterMax = $state('5000');
+	let chaosCpuSec = $state('3');
+	let chaosMemMb = $state('50');
+	let chaosFlakyRate = $state('50');
+	let chaosDegradeMax = $state('10');
 
 	// --------------- Feature Flags state ---------------
 	let ffStatusText = $state('Not checked');
@@ -301,10 +310,12 @@
 	}
 
 	// --- Chaos ---
-	async function chaosAction(action: string, count?: string) {
-		const params = action === 'load' ? `?action=load&count=${count || '10'}` : `?action=${action}`;
+	async function chaosAction(action: string, params: Record<string, string> = {}) {
+		chaosLoading = true;
+		chaosResultVisible = false;
+		const qs = new URLSearchParams({ action, ...params }).toString();
 		try {
-			const resp = await fetch(`/chaos${params}`);
+			const resp = await fetch(`/chaos?${qs}`);
 			const d = await resp.json();
 			chaosResult = JSON.stringify(d, null, 2);
 			chaosResultOk = !d.error;
@@ -314,6 +325,7 @@
 			chaosResultOk = false;
 			chaosResultVisible = true;
 		}
+		chaosLoading = false;
 	}
 
 	// --- Feature Flags ---
@@ -1008,24 +1020,120 @@
 			</div>
 
 			<!-- ── Chaos Testing ── -->
-			<div class="card">
-				<div class="card-head">
+		</div>
+
+		<!-- ═══ Chaos Testing (Full Width) ═══ -->
+		<h3 class="demo-category">Chaos Engineering</h3>
+		<div class="chaos-panel">
+			<div class="chaos-header">
+				<div>
 					<h3>Chaos Testing</h3>
-					<span class="card-tag">Observability</span>
+					<p class="card-desc">Inject failures, latency, and resource pressure to test observability and resilience</p>
 				</div>
-				<p class="card-desc">Trigger errors, latency, and load</p>
-				<div class="btn-row">
-					<button onclick={() => chaosAction('error')} class="btn btn-danger btn-sm">Error</button>
-					<button onclick={() => chaosAction('slow')} class="btn btn-warning btn-sm">Slow</button>
-				</div>
-				<div class="form-row" style="margin-top:0.5rem">
-					<input type="number" bind:value={chaosLoadCount} class="input input-sm" style="max-width:70px" />
-					<button onclick={() => chaosAction('load', chaosLoadCount)} class="btn btn-accent btn-sm">Load Test</button>
-				</div>
-				{#if chaosResultVisible}
-					<pre class="result-pre" class:ok={chaosResultOk} class:err={!chaosResultOk}>{chaosResult}</pre>
-				{/if}
+				{#if chaosLoading}<span class="chaos-loading">Running...</span>{/if}
 			</div>
+
+			<div class="chaos-grid">
+				<!-- Section 1: Error Injection -->
+				<div class="chaos-section">
+					<h4 class="chaos-section-title">Error Injection</h4>
+					<p class="chaos-section-desc">Trigger HTTP errors to test error handling, alerting, and Prometheus error counters</p>
+					<div class="btn-row">
+						<button onclick={() => chaosAction('error')} class="btn btn-danger btn-sm" disabled={chaosLoading}>500 Error</button>
+						<button onclick={() => chaosAction('error502')} class="btn btn-danger btn-sm" disabled={chaosLoading}>502 Gateway</button>
+						<button onclick={() => chaosAction('error503')} class="btn btn-danger btn-sm" disabled={chaosLoading}>503 Unavailable</button>
+					</div>
+				</div>
+
+				<!-- Section 2: Latency Injection -->
+				<div class="chaos-section">
+					<h4 class="chaos-section-title">Latency Injection</h4>
+					<p class="chaos-section-desc">Inject delays to observe p99 latency in Linkerd and Prometheus dashboards</p>
+					<div class="chaos-input-row">
+						<div class="chaos-input-group">
+							<span class="chaos-label">Fixed delay</span>
+							<div class="form-row">
+								<input type="number" bind:value={chaosDelayMs} class="input input-sm" style="max-width:80px" min="100" max="30000" />
+								<span class="chaos-unit">ms</span>
+								<button onclick={() => chaosAction('slow', { delay: chaosDelayMs })} class="btn btn-warning btn-sm" disabled={chaosLoading}>Inject</button>
+							</div>
+						</div>
+						<div class="chaos-input-group">
+							<span class="chaos-label">Random jitter</span>
+							<div class="form-row">
+								<input type="number" bind:value={chaosJitterMin} class="input input-sm" style="max-width:70px" min="0" />
+								<span class="chaos-unit">-</span>
+								<input type="number" bind:value={chaosJitterMax} class="input input-sm" style="max-width:70px" min="100" />
+								<span class="chaos-unit">ms</span>
+								<button onclick={() => chaosAction('jitter', { min: chaosJitterMin, max: chaosJitterMax })} class="btn btn-warning btn-sm" disabled={chaosLoading}>Jitter</button>
+							</div>
+						</div>
+					</div>
+					<button onclick={() => chaosAction('timeout')} class="btn btn-warning btn-sm" disabled={chaosLoading}>Timeout (30s)</button>
+				</div>
+
+				<!-- Section 3: Resource Pressure -->
+				<div class="chaos-section">
+					<h4 class="chaos-section-title">Resource Pressure</h4>
+					<p class="chaos-section-desc">Stress CPU/memory to observe resource metrics, OOM behavior, and autoscaling response</p>
+					<div class="chaos-input-row">
+						<div class="chaos-input-group">
+							<span class="chaos-label">CPU burn</span>
+							<div class="form-row">
+								<input type="number" bind:value={chaosCpuSec} class="input input-sm" style="max-width:60px" min="1" max="10" />
+								<span class="chaos-unit">sec</span>
+								<button onclick={() => chaosAction('cpu', { seconds: chaosCpuSec })} class="btn btn-accent btn-sm" disabled={chaosLoading}>Burn</button>
+							</div>
+						</div>
+						<div class="chaos-input-group">
+							<span class="chaos-label">Memory spike</span>
+							<div class="form-row">
+								<input type="number" bind:value={chaosMemMb} class="input input-sm" style="max-width:60px" min="1" max="256" />
+								<span class="chaos-unit">MB</span>
+								<button onclick={() => chaosAction('memory', { mb: chaosMemMb })} class="btn btn-accent btn-sm" disabled={chaosLoading}>Spike</button>
+							</div>
+						</div>
+						<div class="chaos-input-group">
+							<span class="chaos-label">Concurrent load</span>
+							<div class="form-row">
+								<input type="number" bind:value={chaosLoadCount} class="input input-sm" style="max-width:60px" min="1" max="100" />
+								<span class="chaos-unit">ops</span>
+								<button onclick={() => chaosAction('load', { count: chaosLoadCount })} class="btn btn-accent btn-sm" disabled={chaosLoading}>Run</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Section 4: Failure Patterns -->
+				<div class="chaos-section">
+					<h4 class="chaos-section-title">Failure Patterns</h4>
+					<p class="chaos-section-desc">Simulate real-world failure modes: intermittent errors, cascading failures, and gradual degradation</p>
+					<div class="chaos-input-row">
+						<div class="chaos-input-group">
+							<span class="chaos-label">Flaky endpoint</span>
+							<div class="form-row">
+								<input type="number" bind:value={chaosFlakyRate} class="input input-sm" style="max-width:60px" min="1" max="99" />
+								<span class="chaos-unit">% fail</span>
+								<button onclick={() => chaosAction('flaky', { rate: chaosFlakyRate })} class="btn btn-outline btn-sm" disabled={chaosLoading}>Test</button>
+							</div>
+						</div>
+						<div class="chaos-input-group">
+							<span class="chaos-label">Gradual degradation</span>
+							<div class="form-row">
+								<input type="number" bind:value={chaosDegradeMax} class="input input-sm" style="max-width:60px" min="2" max="50" />
+								<span class="chaos-unit">reqs</span>
+								<button onclick={() => chaosAction('degrade', { requests: chaosDegradeMax })} class="btn btn-outline btn-sm" disabled={chaosLoading}>Degrade</button>
+								<button onclick={() => chaosAction('degrade-reset')} class="btn btn-outline btn-sm" disabled={chaosLoading}>Reset</button>
+							</div>
+						</div>
+					</div>
+					<button onclick={() => chaosAction('cascade')} class="btn btn-outline btn-sm" disabled={chaosLoading}>Cascade Check (Valkey + RabbitMQ + Prometheus)</button>
+				</div>
+			</div>
+
+			{#if chaosResultVisible}
+				<pre class="result-pre chaos-result" class:ok={chaosResultOk} class:err={!chaosResultOk}>{chaosResult}</pre>
+			{/if}
 		</div>
 
 		<!-- ═══ Platform ═══ -->
@@ -1888,6 +1996,97 @@
 		color: var(--danger);
 	}
 
+	/* ─── Chaos Panel (Full Width) ─── */
+	.chaos-panel {
+		background: var(--card-bg);
+		border: 1px solid var(--border);
+		border-radius: 12px;
+		padding: 1.5rem;
+	}
+
+	.chaos-header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		margin-bottom: 1.25rem;
+	}
+
+	.chaos-header h3 {
+		font-size: 1.1rem;
+		font-weight: 600;
+		margin-bottom: 0.25rem;
+	}
+
+	.chaos-loading {
+		font-size: 0.8rem;
+		color: var(--accent);
+		font-weight: 500;
+		animation: pulse 1.5s ease-in-out infinite;
+	}
+
+	@keyframes pulse {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.4; }
+	}
+
+	.chaos-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 1.25rem;
+	}
+
+	.chaos-section {
+		padding: 1rem;
+		background: var(--bg);
+		border-radius: 8px;
+		border: 1px solid var(--border);
+	}
+
+	.chaos-section-title {
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--text-primary);
+		margin-bottom: 0.375rem;
+	}
+
+	.chaos-section-desc {
+		font-size: 0.75rem;
+		color: var(--muted-fg);
+		margin-bottom: 0.75rem;
+		line-height: 1.4;
+	}
+
+	.chaos-input-row {
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.chaos-input-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.chaos-label {
+		font-size: 0.7rem;
+		font-weight: 500;
+		color: var(--text-secondary);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.chaos-unit {
+		font-size: 0.75rem;
+		color: var(--muted-fg);
+		white-space: nowrap;
+	}
+
+	.chaos-result {
+		margin-top: 1.25rem;
+	}
+
 	/* ─── Footer ─── */
 	.footer {
 		display: flex;
@@ -1943,6 +2142,14 @@
 		}
 
 		.prom-stats {
+			grid-template-columns: 1fr;
+		}
+
+		.chaos-panel {
+			padding: 1rem;
+		}
+
+		.chaos-grid {
 			grid-template-columns: 1fr;
 		}
 	}
