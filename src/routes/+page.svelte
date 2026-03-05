@@ -239,7 +239,8 @@
 			const resp = await fetch('/rabbitmq/consume');
 			const d = await resp.json();
 			rmqConsumed = d.messages || [];
-			rmqResult = `${d.count} message${d.count !== 1 ? 's' : ''} in buffer`;
+			const consumers = d.consumerCount ?? 0;
+			rmqResult = `${d.count} message${d.count !== 1 ? 's' : ''} in queue, ${consumers} consumer${consumers !== 1 ? 's' : ''}`;
 			rmqResultOk = true;
 			rmqResultVisible = true;
 		} catch (err) {

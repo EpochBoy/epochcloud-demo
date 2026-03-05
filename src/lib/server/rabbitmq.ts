@@ -116,3 +116,14 @@ export function getRabbitStatus() {
 		consumed_messages: [...consumedMessages]
 	};
 }
+
+export async function getQueueInfo() {
+	if (!channel) {
+		throw new Error('RabbitMQ not connected');
+	}
+	const info = await channel.checkQueue(config.rabbitmq.queue);
+	return {
+		messageCount: info.messageCount,
+		consumerCount: info.consumerCount
+	};
+}
