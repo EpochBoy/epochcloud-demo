@@ -690,7 +690,7 @@
 			</div>
 		</div>
 		<div class="pipeline">
-			{#each ['Git Push', 'Argo Workflows', 'Harbor', 'Kargo', 'ArgoCD'] as step, i}
+			{#each ['Git Push', 'Argo Workflows', 'Harbor', 'Kargo', 'ArgoCD'] as step, i (step)}
 				{#if i > 0}<span class="pipe-arrow">&#8594;</span>{/if}
 				<span class="pipe-step">{step}</span>
 			{/each}
@@ -712,7 +712,7 @@
 					<span class="stack-group-count">{stackOnline.length}</span>
 				</div>
 				<div class="chip-grid">
-					{#each stackOnline as item}
+					{#each stackOnline as item (item)}
 						<span class="chip chip-online">{item}</span>
 					{/each}
 				</div>
@@ -725,7 +725,7 @@
 					<span class="stack-group-count">{stackReview.length}</span>
 				</div>
 				<div class="chip-grid">
-					{#each stackReview as item}
+					{#each stackReview as item (item)}
 						<span class="chip chip-review">{item}</span>
 					{/each}
 				</div>
@@ -738,7 +738,7 @@
 					<span class="stack-group-count">{stackPending.length}</span>
 				</div>
 				<div class="chip-grid">
-					{#each stackPending as item}
+					{#each stackPending as item (item)}
 						<span class="chip chip-pending">{item}</span>
 					{/each}
 				</div>
@@ -753,7 +753,7 @@
 			<span class="count-badge">{dashboards.length}</span>
 		</div>
 		<div class="dash-grid">
-			{#each dashboards as db}
+			{#each dashboards as db (db.sub)}
 				<a href="https://{db.sub}.{domain || 'example.com'}" target="_blank" rel="noopener" class="dash-card">
 					<span class="dash-name">{db.name}</span>
 					<span class="dash-desc">{db.desc}</span>
@@ -794,7 +794,7 @@
 					{/if}
 					{#if rmqConsumed.length > 0}
 						<div class="consumed-list">
-							{#each rmqConsumed.slice(0, 5) as msg}
+							{#each rmqConsumed.slice(0, 5) as msg (msg.timestamp)}
 								<div class="consumed-item">
 									<span class="consumed-msg">{msg.message}</span>
 									<span class="consumed-time">{new Date(msg.timestamp).toLocaleTimeString()}</span>
@@ -937,7 +937,7 @@
 				</div>
 				{#if ddFindings}
 					<div class="findings-grid">
-						{#each Object.entries(ddFindings.by_severity) as [sev, count]}
+						{#each Object.entries(ddFindings.by_severity) as [sev, count] (sev)}
 							<div class="finding-item">
 								<span class="finding-dot" style="background:{severityColors[sev] || 'var(--muted-fg)'}"></span>
 								<span class="finding-label">{sev}</span>
