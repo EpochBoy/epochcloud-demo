@@ -99,6 +99,7 @@ epochcloud/
 | `RYBBIT_HOST` | | Rybbit analytics host |
 
 Build-time variables (injected via Dockerfile ARGs → `PUBLIC_*` env):
+
 - `PUBLIC_VERSION`, `PUBLIC_COMMIT`, `PUBLIC_BUILD_TIME`
 
 ## Local Development
@@ -108,7 +109,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 — most features will show as disabled without the backing services.
+Open <http://localhost:3000> — most features will show as disabled without the backing services.
 
 ## API Routes
 
