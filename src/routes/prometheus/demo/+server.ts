@@ -20,10 +20,9 @@ async function queryPrometheus(promql: string): Promise<number> {
 	const controller = new AbortController();
 	const timer = setTimeout(() => controller.abort(), 3000);
 	try {
-		const resp = await fetch(
-			`${PROMETHEUS_URL}/api/v1/query?query=${encodeURIComponent(promql)}`,
-			{ signal: controller.signal }
-		);
+		const resp = await fetch(`${PROMETHEUS_URL}/api/v1/query?query=${encodeURIComponent(promql)}`, {
+			signal: controller.signal
+		});
 		if (!resp.ok) return NaN;
 		const data = await resp.json();
 		const value = data?.data?.result?.[0]?.value?.[1];

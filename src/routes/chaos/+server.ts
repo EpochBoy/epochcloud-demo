@@ -19,17 +19,38 @@ export const GET: RequestHandler = async ({ url, fetch: svelteKitFetch }) => {
 
 	if (action === 'error') {
 		errorsTotal.inc({ type: 'chaos_500' });
-		return json({ error: 'Chaos: Internal Server Error (500)', action: 'error', timestamp: new Date().toISOString() }, 500);
+		return json(
+			{
+				error: 'Chaos: Internal Server Error (500)',
+				action: 'error',
+				timestamp: new Date().toISOString()
+			},
+			500
+		);
 	}
 
 	if (action === 'error502') {
 		errorsTotal.inc({ type: 'chaos_502' });
-		return json({ error: 'Chaos: Bad Gateway (502)', action: 'error502', timestamp: new Date().toISOString() }, 502);
+		return json(
+			{
+				error: 'Chaos: Bad Gateway (502)',
+				action: 'error502',
+				timestamp: new Date().toISOString()
+			},
+			502
+		);
 	}
 
 	if (action === 'error503') {
 		errorsTotal.inc({ type: 'chaos_503' });
-		return json({ error: 'Chaos: Service Unavailable (503)', action: 'error503', timestamp: new Date().toISOString() }, 503);
+		return json(
+			{
+				error: 'Chaos: Service Unavailable (503)',
+				action: 'error503',
+				timestamp: new Date().toISOString()
+			},
+			503
+		);
 	}
 
 	// ═══════════════════════════════════════════════
@@ -149,13 +170,16 @@ export const GET: RequestHandler = async ({ url, fetch: svelteKitFetch }) => {
 		const failed = Math.random() * 100 < rate;
 		if (failed) {
 			errorsTotal.inc({ type: 'chaos_flaky' });
-			return json({
-				error: `Flaky failure (${rate}% failure rate)`,
-				action: 'flaky',
-				failed: true,
-				rate,
-				timestamp: new Date().toISOString()
-			}, 500);
+			return json(
+				{
+					error: `Flaky failure (${rate}% failure rate)`,
+					action: 'flaky',
+					failed: true,
+					rate,
+					timestamp: new Date().toISOString()
+				},
+				500
+			);
 		}
 		return json({
 			message: `Flaky success (${rate}% failure rate)`,
@@ -196,19 +220,25 @@ export const GET: RequestHandler = async ({ url, fetch: svelteKitFetch }) => {
 
 		const totalMs = Math.round(performance.now() - start);
 		const allOk = results.every((r) => r.status === 'ok');
-		return json({
-			message: `Cascade check: ${results.filter((r) => r.status === 'ok').length}/${results.length} services healthy`,
-			action: 'cascade',
-			services: results,
-			total_ms: totalMs,
-			all_healthy: allOk,
-			timestamp: new Date().toISOString()
-		}, allOk ? 200 : 503);
+		return json(
+			{
+				message: `Cascade check: ${results.filter((r) => r.status === 'ok').length}/${results.length} services healthy`,
+				action: 'cascade',
+				services: results,
+				total_ms: totalMs,
+				all_healthy: allOk,
+				timestamp: new Date().toISOString()
+			},
+			allOk ? 200 : 503
+		);
 	}
 
 	if (action === 'degrade') {
 		degradeCounter++;
-		const maxRequests = Math.min(Math.max(parseInt(url.searchParams.get('requests') || '10'), 2), 50);
+		const maxRequests = Math.min(
+			Math.max(parseInt(url.searchParams.get('requests') || '10'), 2),
+			50
+		);
 		// Delay grows linearly: 0ms at request 1, up to 5000ms at maxRequests
 		const delay = Math.round(Math.min(degradeCounter / maxRequests, 1) * 5000);
 		await new Promise((resolve) => setTimeout(resolve, delay));
@@ -234,9 +264,26 @@ export const GET: RequestHandler = async ({ url, fetch: svelteKitFetch }) => {
 		});
 	}
 
-	return json({
-		error: 'Unknown action',
-		available: ['error', 'error502', 'error503', 'slow', 'jitter', 'timeout', 'cpu', 'memory', 'load', 'flaky', 'cascade', 'degrade', 'degrade-reset'],
-		timestamp: new Date().toISOString()
-	}, 400);
+	return json(
+		{
+			error: 'Unknown action',
+			available: [
+				'error',
+				'error502',
+				'error503',
+				'slow',
+				'jitter',
+				'timeout',
+				'cpu',
+				'memory',
+				'load',
+				'flaky',
+				'cascade',
+				'degrade',
+				'degrade-reset'
+			],
+			timestamp: new Date().toISOString()
+		},
+		400
+	);
 };

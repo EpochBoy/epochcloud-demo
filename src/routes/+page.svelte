@@ -133,7 +133,9 @@
 			const resp = await fetch('/auth/status');
 			const d = await resp.json();
 			authStatusOk = d.connected;
-			authStatusText = d.connected ? `Connected — ${d.health}` : `Disconnected${d.error ? ' — ' + d.error : ''}`;
+			authStatusText = d.connected
+				? `Connected — ${d.health}`
+				: `Disconnected${d.error ? ' — ' + d.error : ''}`;
 		} catch (err) {
 			authStatusText = `Error: ${err}`;
 			authStatusOk = false;
@@ -205,7 +207,9 @@
 
 		for (let i = 0; i < count; i++) {
 			try {
-				const params = msg ? `?message=${encodeURIComponent(msg + (count > 1 ? ` #${i + 1}` : ''))}` : '';
+				const params = msg
+					? `?message=${encodeURIComponent(msg + (count > 1 ? ` #${i + 1}` : ''))}`
+					: '';
 				const resp = await fetch(`/rabbitmq/publish${params}`);
 				const d = await resp.json();
 				if (!d.success) results.push(`#${i + 1}: ${d.error}`);
@@ -275,7 +279,9 @@
 
 	async function vkSet() {
 		try {
-			const resp = await fetch(`/cache/set?key=${encodeURIComponent(vkSetKey)}&value=${encodeURIComponent(vkSetValue)}&ttl=${vkSetTtl}`);
+			const resp = await fetch(
+				`/cache/set?key=${encodeURIComponent(vkSetKey)}&value=${encodeURIComponent(vkSetValue)}&ttl=${vkSetTtl}`
+			);
 			const d = await resp.json();
 			vkResult = d.success ? `Set "${d.key}" = "${d.value}" (TTL: ${d.ttl_seconds}s)` : d.error;
 			vkResultOk = d.success;
@@ -327,7 +333,9 @@
 			const resp = await fetch('/features/status');
 			const d = await resp.json();
 			ffStatusOk = d.connected;
-			ffStatusText = d.connected ? `Connected — ${d.flags_available || 0} flags` : `Disconnected${d.error ? ' — ' + d.error : ''}`;
+			ffStatusText = d.connected
+				? `Connected — ${d.flags_available || 0} flags`
+				: `Disconnected${d.error ? ' — ' + d.error : ''}`;
 		} catch (err) {
 			ffStatusText = `Error: ${err}`;
 			ffStatusOk = false;
@@ -336,7 +344,9 @@
 
 	async function ffEvaluate() {
 		try {
-			const resp = await fetch(`/features/evaluate?flag=${encodeURIComponent(ffFlagName)}&user=${encodeURIComponent(ffUserId)}`);
+			const resp = await fetch(
+				`/features/evaluate?flag=${encodeURIComponent(ffFlagName)}&user=${encodeURIComponent(ffUserId)}`
+			);
 			const d = await resp.json();
 			ffResult = JSON.stringify(d, null, 2);
 			ffResultOk = !d.error;
@@ -504,9 +514,12 @@
 
 	function envBadgeClass(env: string): string {
 		switch (env) {
-			case 'prod': return 'badge-prod';
-			case 'staging': return 'badge-staging';
-			default: return 'badge-dev';
+			case 'prod':
+				return 'badge-prod';
+			case 'staging':
+				return 'badge-staging';
+			default:
+				return 'badge-dev';
 		}
 	}
 
@@ -630,9 +643,17 @@
 	<span class="status-icon" class:ok class:checked>
 		{#if checked}
 			{#if ok}
-				<svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>
+				<svg viewBox="0 0 16 16" fill="currentColor"
+					><path
+						d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"
+					/></svg
+				>
 			{:else}
-				<svg viewBox="0 0 16 16" fill="currentColor"><path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"/></svg>
+				<svg viewBox="0 0 16 16" fill="currentColor"
+					><path
+						d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"
+					/></svg
+				>
 			{/if}
 		{/if}
 	</span>
@@ -641,11 +662,7 @@
 <svelte:head>
 	<title>EpochCloud</title>
 	{#if data.rybbit}
-		<script
-			src="{data.rybbit.host}/script.js"
-			data-site-id={data.rybbit.siteId}
-			defer
-		></script>
+		<script src="{data.rybbit.host}/script.js" data-site-id={data.rybbit.siteId} defer></script>
 	{/if}
 </svelte:head>
 
@@ -662,7 +679,8 @@
 				<a
 					href="https://{stage.prefix}.{data.domain}"
 					class="stage-pill"
-					class:active={data.environment === (stage.label === 'Prod' ? 'prod' : stage.label.toLowerCase())}
+					class:active={data.environment ===
+						(stage.label === 'Prod' ? 'prod' : stage.label.toLowerCase())}
 				>
 					{stage.label}
 				</a>
@@ -705,7 +723,9 @@
 	<section class="section">
 		<div class="section-head">
 			<h2 class="section-title">Platform Stack</h2>
-			<span class="count-badge">{stackOnline.length + stackReview.length + stackPending.length}</span>
+			<span class="count-badge"
+				>{stackOnline.length + stackReview.length + stackPending.length}</span
+			>
 		</div>
 
 		<div class="stack-groups">
@@ -788,8 +808,20 @@
 				</div>
 				{#if data.features.rabbitmq}
 					<div class="form-row">
-						<input type="text" bind:value={rmqMessage} placeholder="Message (optional)" class="input" />
-						<input type="number" bind:value={rmqBatchCount} min="1" max="50" class="input input-sm" style="max-width:70px" />
+						<input
+							type="text"
+							bind:value={rmqMessage}
+							placeholder="Message (optional)"
+							class="input"
+						/>
+						<input
+							type="number"
+							bind:value={rmqBatchCount}
+							min="1"
+							max="50"
+							class="input input-sm"
+							style="max-width:70px"
+						/>
 						<button onclick={rmqPublish} class="btn btn-primary btn-sm">Publish</button>
 						<button onclick={rmqConsume} class="btn btn-outline btn-sm">Consume</button>
 					</div>
@@ -853,7 +885,12 @@
 				</div>
 				{#if data.features.smtp}
 					<div class="form-row">
-						<input type="email" bind:value={emailInput} placeholder="recipient@example.com" class="input" />
+						<input
+							type="email"
+							bind:value={emailInput}
+							placeholder="recipient@example.com"
+							class="input"
+						/>
 						<button onclick={sendEmail} class="btn btn-primary btn-sm">Send</button>
 					</div>
 					{#if emailStatus}
@@ -885,13 +922,23 @@
 							<span class="form-label">Register</span>
 							<input type="text" bind:value={authRegName} placeholder="Name" class="input" />
 							<input type="email" bind:value={authRegEmail} placeholder="Email" class="input" />
-							<input type="password" bind:value={authRegPass} placeholder="Password" class="input" />
+							<input
+								type="password"
+								bind:value={authRegPass}
+								placeholder="Password"
+								class="input"
+							/>
 							<button onclick={authRegister} class="btn btn-primary btn-sm w-full">Register</button>
 						</div>
 						<div class="form-col">
 							<span class="form-label">Login</span>
 							<input type="email" bind:value={authLoginEmail} placeholder="Email" class="input" />
-							<input type="password" bind:value={authLoginPass} placeholder="Password" class="input" />
+							<input
+								type="password"
+								bind:value={authLoginPass}
+								placeholder="Password"
+								class="input"
+							/>
 							<button onclick={authLogin} class="btn btn-secondary btn-sm w-full">Login</button>
 						</div>
 					</div>
@@ -943,7 +990,10 @@
 					<div class="findings-grid">
 						{#each Object.entries(ddFindings.by_severity) as [sev, count] (sev)}
 							<div class="finding-item">
-								<span class="finding-dot" style="background:{severityColors[sev] || 'var(--muted-fg)'}"></span>
+								<span
+									class="finding-dot"
+									style="background:{severityColors[sev] || 'var(--muted-fg)'}"
+								></span>
 								<span class="finding-label">{sev}</span>
 								<span class="finding-count">{count}</span>
 							</div>
@@ -955,7 +1005,13 @@
 					</div>
 				{/if}
 				{#if data.features.defectdojo && data.domain}
-					<a href="https://defectdojo.{data.domain}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm w-full" style="margin-top:0.5rem">Open Dashboard</a>
+					<a
+						href="https://defectdojo.{data.domain}"
+						target="_blank"
+						rel="noopener"
+						class="btn btn-ghost btn-sm w-full"
+						style="margin-top:0.5rem">Open Dashboard</a
+					>
 				{:else if !data.features.defectdojo}
 					<p class="disabled-msg">Not configured — DEFECTDOJO_URL not set</p>
 				{/if}
@@ -973,8 +1029,12 @@
 				</div>
 				<p class="card-desc">Aggregated app metrics via Prometheus API</p>
 				<div class="btn-row">
-					<button onclick={() => loadPromMetrics(true)} class="btn btn-primary btn-sm">Increment Counter</button>
-					<button onclick={() => loadPromMetrics(false)} class="btn btn-outline btn-sm">Refresh</button>
+					<button onclick={() => loadPromMetrics(true)} class="btn btn-primary btn-sm"
+						>Increment Counter</button
+					>
+					<button onclick={() => loadPromMetrics(false)} class="btn btn-outline btn-sm"
+						>Refresh</button
+					>
 				</div>
 				{#if promLoaded}
 					<div class="prom-stats">
@@ -1007,7 +1067,10 @@
 				<p class="card-desc">mTLS sidecar proxy metrics</p>
 				<button onclick={loadLinkerdStats} class="btn btn-outline btn-sm w-full">Load Stats</button>
 				{#if linkerdResultVisible}
-					<pre class="result-pre" class:ok={linkerdResultOk} class:err={!linkerdResultOk}>{linkerdResult}</pre>
+					<pre
+						class="result-pre"
+						class:ok={linkerdResultOk}
+						class:err={!linkerdResultOk}>{linkerdResult}</pre>
 				{/if}
 			</div>
 
@@ -1020,7 +1083,9 @@
 			<div class="chaos-header">
 				<div>
 					<h3>Chaos Testing</h3>
-					<p class="card-desc">Inject failures, latency, and resource pressure to test observability and resilience</p>
+					<p class="card-desc">
+						Inject failures, latency, and resource pressure to test observability and resilience
+					</p>
 				</div>
 				{#if chaosLoading}<span class="chaos-loading">Running...</span>{/if}
 			</div>
@@ -1029,68 +1094,151 @@
 				<!-- Section 1: Error Injection -->
 				<div class="chaos-section">
 					<h4 class="chaos-section-title">Error Injection</h4>
-					<p class="chaos-section-desc">Trigger HTTP errors to test error handling, alerting, and Prometheus error counters</p>
+					<p class="chaos-section-desc">
+						Trigger HTTP errors to test error handling, alerting, and Prometheus error counters
+					</p>
 					<div class="btn-row">
-						<button onclick={() => chaosAction('error')} class="btn btn-danger btn-sm" disabled={chaosLoading}>500 Error</button>
-						<button onclick={() => chaosAction('error502')} class="btn btn-danger btn-sm" disabled={chaosLoading}>502 Gateway</button>
-						<button onclick={() => chaosAction('error503')} class="btn btn-danger btn-sm" disabled={chaosLoading}>503 Unavailable</button>
+						<button
+							onclick={() => chaosAction('error')}
+							class="btn btn-danger btn-sm"
+							disabled={chaosLoading}>500 Error</button
+						>
+						<button
+							onclick={() => chaosAction('error502')}
+							class="btn btn-danger btn-sm"
+							disabled={chaosLoading}>502 Gateway</button
+						>
+						<button
+							onclick={() => chaosAction('error503')}
+							class="btn btn-danger btn-sm"
+							disabled={chaosLoading}>503 Unavailable</button
+						>
 					</div>
 				</div>
 
 				<!-- Section 2: Latency Injection -->
 				<div class="chaos-section">
 					<h4 class="chaos-section-title">Latency Injection</h4>
-					<p class="chaos-section-desc">Inject delays to observe p99 latency in Linkerd and Prometheus dashboards</p>
+					<p class="chaos-section-desc">
+						Inject delays to observe p99 latency in Linkerd and Prometheus dashboards
+					</p>
 					<div class="chaos-input-row">
 						<div class="chaos-input-group">
 							<span class="chaos-label">Fixed delay</span>
 							<div class="form-row">
-								<input type="number" bind:value={chaosDelayMs} class="input input-sm" style="max-width:80px" min="100" max="30000" />
+								<input
+									type="number"
+									bind:value={chaosDelayMs}
+									class="input input-sm"
+									style="max-width:80px"
+									min="100"
+									max="30000"
+								/>
 								<span class="chaos-unit">ms</span>
-								<button onclick={() => chaosAction('slow', { delay: chaosDelayMs })} class="btn btn-warning btn-sm" disabled={chaosLoading}>Inject</button>
+								<button
+									onclick={() => chaosAction('slow', { delay: chaosDelayMs })}
+									class="btn btn-warning btn-sm"
+									disabled={chaosLoading}>Inject</button
+								>
 							</div>
 						</div>
 						<div class="chaos-input-group">
 							<span class="chaos-label">Random jitter</span>
 							<div class="form-row">
-								<input type="number" bind:value={chaosJitterMin} class="input input-sm" style="max-width:70px" min="0" />
+								<input
+									type="number"
+									bind:value={chaosJitterMin}
+									class="input input-sm"
+									style="max-width:70px"
+									min="0"
+								/>
 								<span class="chaos-unit">-</span>
-								<input type="number" bind:value={chaosJitterMax} class="input input-sm" style="max-width:70px" min="100" />
+								<input
+									type="number"
+									bind:value={chaosJitterMax}
+									class="input input-sm"
+									style="max-width:70px"
+									min="100"
+								/>
 								<span class="chaos-unit">ms</span>
-								<button onclick={() => chaosAction('jitter', { min: chaosJitterMin, max: chaosJitterMax })} class="btn btn-warning btn-sm" disabled={chaosLoading}>Jitter</button>
+								<button
+									onclick={() =>
+										chaosAction('jitter', { min: chaosJitterMin, max: chaosJitterMax })}
+									class="btn btn-warning btn-sm"
+									disabled={chaosLoading}>Jitter</button
+								>
 							</div>
 						</div>
 					</div>
-					<button onclick={() => chaosAction('timeout')} class="btn btn-warning btn-sm" disabled={chaosLoading}>Timeout (30s)</button>
+					<button
+						onclick={() => chaosAction('timeout')}
+						class="btn btn-warning btn-sm"
+						disabled={chaosLoading}>Timeout (30s)</button
+					>
 				</div>
 
 				<!-- Section 3: Resource Pressure -->
 				<div class="chaos-section">
 					<h4 class="chaos-section-title">Resource Pressure</h4>
-					<p class="chaos-section-desc">Stress CPU/memory to observe resource metrics, OOM behavior, and autoscaling response</p>
+					<p class="chaos-section-desc">
+						Stress CPU/memory to observe resource metrics, OOM behavior, and autoscaling response
+					</p>
 					<div class="chaos-input-row">
 						<div class="chaos-input-group">
 							<span class="chaos-label">CPU burn</span>
 							<div class="form-row">
-								<input type="number" bind:value={chaosCpuSec} class="input input-sm" style="max-width:60px" min="1" max="10" />
+								<input
+									type="number"
+									bind:value={chaosCpuSec}
+									class="input input-sm"
+									style="max-width:60px"
+									min="1"
+									max="10"
+								/>
 								<span class="chaos-unit">sec</span>
-								<button onclick={() => chaosAction('cpu', { seconds: chaosCpuSec })} class="btn btn-accent btn-sm" disabled={chaosLoading}>Burn</button>
+								<button
+									onclick={() => chaosAction('cpu', { seconds: chaosCpuSec })}
+									class="btn btn-accent btn-sm"
+									disabled={chaosLoading}>Burn</button
+								>
 							</div>
 						</div>
 						<div class="chaos-input-group">
 							<span class="chaos-label">Memory spike</span>
 							<div class="form-row">
-								<input type="number" bind:value={chaosMemMb} class="input input-sm" style="max-width:60px" min="1" max="256" />
+								<input
+									type="number"
+									bind:value={chaosMemMb}
+									class="input input-sm"
+									style="max-width:60px"
+									min="1"
+									max="256"
+								/>
 								<span class="chaos-unit">MB</span>
-								<button onclick={() => chaosAction('memory', { mb: chaosMemMb })} class="btn btn-accent btn-sm" disabled={chaosLoading}>Spike</button>
+								<button
+									onclick={() => chaosAction('memory', { mb: chaosMemMb })}
+									class="btn btn-accent btn-sm"
+									disabled={chaosLoading}>Spike</button
+								>
 							</div>
 						</div>
 						<div class="chaos-input-group">
 							<span class="chaos-label">Concurrent load</span>
 							<div class="form-row">
-								<input type="number" bind:value={chaosLoadCount} class="input input-sm" style="max-width:60px" min="1" max="100" />
+								<input
+									type="number"
+									bind:value={chaosLoadCount}
+									class="input input-sm"
+									style="max-width:60px"
+									min="1"
+									max="100"
+								/>
 								<span class="chaos-unit">ops</span>
-								<button onclick={() => chaosAction('load', { count: chaosLoadCount })} class="btn btn-accent btn-sm" disabled={chaosLoading}>Run</button>
+								<button
+									onclick={() => chaosAction('load', { count: chaosLoadCount })}
+									class="btn btn-accent btn-sm"
+									disabled={chaosLoading}>Run</button
+								>
 							</div>
 						</div>
 					</div>
@@ -1099,32 +1247,68 @@
 				<!-- Section 4: Failure Patterns -->
 				<div class="chaos-section">
 					<h4 class="chaos-section-title">Failure Patterns</h4>
-					<p class="chaos-section-desc">Simulate real-world failure modes: intermittent errors, cascading failures, and gradual degradation</p>
+					<p class="chaos-section-desc">
+						Simulate real-world failure modes: intermittent errors, cascading failures, and gradual
+						degradation
+					</p>
 					<div class="chaos-input-row">
 						<div class="chaos-input-group">
 							<span class="chaos-label">Flaky endpoint</span>
 							<div class="form-row">
-								<input type="number" bind:value={chaosFlakyRate} class="input input-sm" style="max-width:60px" min="1" max="99" />
+								<input
+									type="number"
+									bind:value={chaosFlakyRate}
+									class="input input-sm"
+									style="max-width:60px"
+									min="1"
+									max="99"
+								/>
 								<span class="chaos-unit">% fail</span>
-								<button onclick={() => chaosAction('flaky', { rate: chaosFlakyRate })} class="btn btn-outline btn-sm" disabled={chaosLoading}>Test</button>
+								<button
+									onclick={() => chaosAction('flaky', { rate: chaosFlakyRate })}
+									class="btn btn-outline btn-sm"
+									disabled={chaosLoading}>Test</button
+								>
 							</div>
 						</div>
 						<div class="chaos-input-group">
 							<span class="chaos-label">Gradual degradation</span>
 							<div class="form-row">
-								<input type="number" bind:value={chaosDegradeMax} class="input input-sm" style="max-width:60px" min="2" max="50" />
+								<input
+									type="number"
+									bind:value={chaosDegradeMax}
+									class="input input-sm"
+									style="max-width:60px"
+									min="2"
+									max="50"
+								/>
 								<span class="chaos-unit">reqs</span>
-								<button onclick={() => chaosAction('degrade', { requests: chaosDegradeMax })} class="btn btn-outline btn-sm" disabled={chaosLoading}>Degrade</button>
-								<button onclick={() => chaosAction('degrade-reset')} class="btn btn-outline btn-sm" disabled={chaosLoading}>Reset</button>
+								<button
+									onclick={() => chaosAction('degrade', { requests: chaosDegradeMax })}
+									class="btn btn-outline btn-sm"
+									disabled={chaosLoading}>Degrade</button
+								>
+								<button
+									onclick={() => chaosAction('degrade-reset')}
+									class="btn btn-outline btn-sm"
+									disabled={chaosLoading}>Reset</button
+								>
 							</div>
 						</div>
 					</div>
-					<button onclick={() => chaosAction('cascade')} class="btn btn-outline btn-sm" disabled={chaosLoading}>Cascade Check (Valkey + RabbitMQ + Prometheus)</button>
+					<button
+						onclick={() => chaosAction('cascade')}
+						class="btn btn-outline btn-sm"
+						disabled={chaosLoading}>Cascade Check (Valkey + RabbitMQ + Prometheus)</button
+					>
 				</div>
 			</div>
 
 			{#if chaosResultVisible}
-				<pre class="result-pre chaos-result" class:ok={chaosResultOk} class:err={!chaosResultOk}>{chaosResult}</pre>
+				<pre
+					class="result-pre chaos-result"
+					class:ok={chaosResultOk}
+					class:err={!chaosResultOk}>{chaosResult}</pre>
 			{/if}
 		</div>
 
@@ -1158,7 +1342,9 @@
 						<div class="form-col">
 							<span class="form-label">All Flags</span>
 							<input type="text" bind:value={ffAllUserId} placeholder="User ID" class="input" />
-							<button onclick={ffEvalAll} class="btn btn-secondary btn-sm w-full">Evaluate All</button>
+							<button onclick={ffEvalAll} class="btn btn-secondary btn-sm w-full"
+								>Evaluate All</button
+							>
 						</div>
 					</div>
 					{#if ffResultVisible}
@@ -1182,8 +1368,14 @@
 				</div>
 				{#if data.features.ntfy}
 					<input type="text" bind:value={ntfyTopic} placeholder="Topic" class="input" />
-					<input type="text" bind:value={ntfyMessage} placeholder="Message (optional)" class="input" />
-					<button onclick={ntfySend} class="btn btn-primary btn-sm w-full">Send Notification</button>
+					<input
+						type="text"
+						bind:value={ntfyMessage}
+						placeholder="Message (optional)"
+						class="input"
+					/>
+					<button onclick={ntfySend} class="btn btn-primary btn-sm w-full">Send Notification</button
+					>
 					{#if ntfyResultVisible}
 						<p class="result" class:ok={ntfyResultOk} class:err={!ntfyResultOk}>{ntfyResult}</p>
 					{/if}
@@ -1202,13 +1394,27 @@
 				{#if data.features.knative}
 					<div class="form-row">
 						<span class="form-label" style="white-space:nowrap">n =</span>
-						<input type="number" bind:value={knativeN} min="0" max="50" class="input input-sm" style="max-width:80px" />
-						<button onclick={knativeInvoke} class="btn btn-primary btn-sm" disabled={knativeLoading}>
+						<input
+							type="number"
+							bind:value={knativeN}
+							min="0"
+							max="50"
+							class="input input-sm"
+							style="max-width:80px"
+						/>
+						<button
+							onclick={knativeInvoke}
+							class="btn btn-primary btn-sm"
+							disabled={knativeLoading}
+						>
 							{knativeLoading ? 'Invoking...' : 'Invoke'}
 						</button>
 					</div>
 					{#if knativeResultVisible}
-						<pre class="result-pre" class:ok={knativeResultOk} class:err={!knativeResultOk}>{knativeResult}</pre>
+						<pre
+							class="result-pre"
+							class:ok={knativeResultOk}
+							class:err={!knativeResultOk}>{knativeResult}</pre>
 					{/if}
 				{:else}
 					<p class="disabled-msg">Not configured — KNATIVE_FIBONACCI_URL not set</p>
@@ -1219,14 +1425,19 @@
 
 	<!-- ═══ Pending Stack ═══ -->
 	<section class="section">
-		<h3 class="demo-category" style="border-color: rgba(255,255,255,0.1); border-style: dashed;">Pending</h3>
+		<h3 class="demo-category" style="border-color: rgba(255,255,255,0.1); border-style: dashed;">
+			Pending
+		</h3>
 		<div class="demo-grid">
 			<div class="card" style="border-style: dashed; opacity: 0.7;">
 				<div class="card-head">
 					<h3>LitmusChaos</h3>
 					<span class="card-tag">Chaos Engineering</span>
 				</div>
-				<p class="card-desc">CNCF chaos engineering platform — infrastructure-level fault injection, experiment scheduling, and GameDay workflows</p>
+				<p class="card-desc">
+					CNCF chaos engineering platform — infrastructure-level fault injection, experiment
+					scheduling, and GameDay workflows
+				</p>
 				<div class="info-grid" style="margin-top: 0.75rem;">
 					<span class="card-tag">Pod Kill</span>
 					<span class="card-tag">Network Loss</span>
@@ -1254,7 +1465,12 @@
 		padding: 0;
 		background: #09090b;
 		color: #fafafa;
-		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		font-family:
+			'Inter',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			sans-serif;
 		min-height: 100vh;
 		-webkit-font-smoothing: antialiased;
 	}
@@ -2039,8 +2255,13 @@
 	}
 
 	@keyframes pulse {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.4; }
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.4;
+		}
 	}
 
 	.chaos-grid {
