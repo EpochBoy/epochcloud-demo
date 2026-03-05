@@ -11,6 +11,7 @@ export const config = {
 	environment: env.ENVIRONMENT || 'dev',
 	port: parseInt(env.PORT || '3000'),
 	hostname: env.HOSTNAME || 'unknown',
+	startedAt: new Date().toISOString(),
 
 	// Consumer mode
 	consumerMode: env.CONSUMER_MODE === 'true',

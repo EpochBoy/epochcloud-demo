@@ -10,6 +10,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		buildTime: config.buildTime,
 		hostname: config.hostname,
 		environment: config.environment,
+		startedAt: config.startedAt,
 		consumerMode: config.consumerMode,
 		rybbit: config.rybbit.enabled
 			? { siteId: config.rybbit.siteId, host: config.rybbit.host }

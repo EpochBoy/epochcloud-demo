@@ -28,12 +28,9 @@ export const GET: RequestHandler = async ({ url }) => {
 		const allFlags = await resp.json();
 		return Response.json(allFlags);
 	} catch (err) {
-		return Response.json(
-			{
-				error: `Relay proxy request failed: ${String(err)}`,
-				timestamp
-			},
-			{ status: 502 }
-		);
+		return Response.json({
+			error: `Relay proxy request failed: ${String(err)}`,
+			timestamp
+		});
 	}
 };

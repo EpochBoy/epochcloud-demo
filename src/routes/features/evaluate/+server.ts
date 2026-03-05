@@ -46,13 +46,10 @@ export const GET: RequestHandler = async ({ url }) => {
 			timestamp
 		});
 	} catch (err) {
-		return Response.json(
-			{
-				flag: flagName,
-				error: `Relay proxy request failed: ${String(err)}`,
-				timestamp
-			},
-			{ status: 502 }
-		);
+		return Response.json({
+			flag: flagName,
+			error: `Relay proxy request failed: ${String(err)}`,
+			timestamp
+		});
 	}
 };
