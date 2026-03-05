@@ -195,7 +195,9 @@
 
 	$effect(() => {
 		uptime = formatUptime(data.startedAt);
-		const tick = setInterval(() => { uptime = formatUptime(data.startedAt); }, 1000);
+		const tick = setInterval(() => {
+			uptime = formatUptime(data.startedAt);
+		}, 1000);
 		return () => clearInterval(tick);
 	});
 
@@ -736,7 +738,13 @@
 			}
 			if (increment) {
 				const now = new Date();
-				promHistory = [{ time: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`, count: burst }, ...promHistory].slice(0, 15);
+				promHistory = [
+					{
+						time: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`,
+						count: burst
+					},
+					...promHistory
+				].slice(0, 15);
 			}
 			const now = new Date();
 			promLastUpdated = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
@@ -964,7 +972,9 @@
 				<span class="build-sep"></span>
 				<div class="build-item">
 					<span class="build-label">Commit</span>
-					<span class="build-value"><code class="build-commit">{data.commit.substring(0, 7)}</code></span>
+					<span class="build-value"
+						><code class="build-commit">{data.commit.substring(0, 7)}</code></span
+					>
 				</div>
 				<span class="build-sep"></span>
 				<div class="build-item">
@@ -979,7 +989,9 @@
 				<span class="build-sep"></span>
 				<div class="build-item">
 					<span class="build-label">Environment</span>
-					<span class="build-value"><span class="build-env-badge badge-{data.environment}">{data.environment}</span></span>
+					<span class="build-value"
+						><span class="build-env-badge badge-{data.environment}">{data.environment}</span></span
+					>
 				</div>
 			</div>
 		</div>
@@ -988,7 +1000,11 @@
 				<span class="build-label">Pod</span>
 				<span class="build-value build-pod-name">{data.hostname}</span>
 			</div>
-			<button class="btn btn-outline btn-sm build-rotate-btn" onclick={rotatePod} disabled={podRotating}>
+			<button
+				class="btn btn-outline btn-sm build-rotate-btn"
+				onclick={rotatePod}
+				disabled={podRotating}
+			>
 				{podRotating ? '↻ Rotating...' : '↻ Rotate Pod'}
 			</button>
 			{#if podRotateMsg}
@@ -996,13 +1012,7 @@
 			{/if}
 		</div>
 		<div class="pipeline">
-			{#each [
-				{ name: 'Git Push', icon: '⬆' },
-				{ name: 'Argo Workflows', icon: '⚙' },
-				{ name: 'Harbor', icon: '📦' },
-				{ name: 'Kargo', icon: '🚀' },
-				{ name: 'ArgoCD', icon: '🔄' }
-			] as step, i (step.name)}
+			{#each [{ name: 'Git Push', icon: '⬆' }, { name: 'Argo Workflows', icon: '⚙' }, { name: 'Harbor', icon: '📦' }, { name: 'Kargo', icon: '🚀' }, { name: 'ArgoCD', icon: '🔄' }] as step, i (step.name)}
 				{#if i > 0}<span class="pipe-connector"></span>{/if}
 				<div class="pipe-step">
 					<span class="pipe-icon">{step.icon}</span>
@@ -1428,14 +1438,22 @@
 				</p>
 				<div class="prom-controls">
 					<button onclick={() => loadPromMetrics(true)} class="btn btn-primary btn-sm">+1</button>
-					<button onclick={() => loadPromMetrics(true, 5)} class="btn btn-primary btn-sm">+5</button>
-					<button onclick={() => loadPromMetrics(true, 25)} class="btn btn-primary btn-sm">+25</button>
-					<button onclick={() => loadPromMetrics(false)} class="btn btn-outline btn-sm">Refresh</button>
+					<button onclick={() => loadPromMetrics(true, 5)} class="btn btn-primary btn-sm">+5</button
+					>
+					<button onclick={() => loadPromMetrics(true, 25)} class="btn btn-primary btn-sm"
+						>+25</button
+					>
+					<button onclick={() => loadPromMetrics(false)} class="btn btn-outline btn-sm"
+						>Refresh</button
+					>
 					<button
 						class="btn btn-sm"
 						class:btn-outline={!promLive}
 						class:btn-ok={promLive}
-						onclick={() => { promLive = !promLive; if (promLive) loadPromMetrics(false); }}
+						onclick={() => {
+							promLive = !promLive;
+							if (promLive) loadPromMetrics(false);
+						}}
 					>
 						{#if promLive}<span class="live-dot"></span>{/if}
 						{promLive ? 'Live' : 'Auto-refresh'}
@@ -1451,7 +1469,11 @@
 						<div class="prom-stat">
 							<span class="prom-val">{promHttpTotal.toLocaleString()}</span>
 							<span class="prom-label">HTTP Total</span>
-							<span class="prom-scope">{promSource === 'prometheus' ? 'all pods' : 'this pod'}{promRate > 0 ? ` · +${promRate}` : ''}</span>
+							<span class="prom-scope"
+								>{promSource === 'prometheus' ? 'all pods' : 'this pod'}{promRate > 0
+									? ` · +${promRate}`
+									: ''}</span
+							>
 						</div>
 						<div class="prom-stat">
 							<span class="prom-val">{promActive}</span>
@@ -1470,17 +1492,23 @@
 						<div class="prom-latency">
 							<span class="prom-latency-title">Latency</span>
 							<div class="prom-latency-bars">
-								{#each [
-									{ label: 'p50', val: promLatency.p50 },
-									{ label: 'p95', val: promLatency.p95 },
-									{ label: 'p99', val: promLatency.p99 }
-								] as pct}
+								{#each [{ label: 'p50', val: promLatency.p50 }, { label: 'p95', val: promLatency.p95 }, { label: 'p99', val: promLatency.p99 }] as pct}
 									<div class="prom-pct">
 										<span class="prom-pct-label">{pct.label}</span>
 										<div class="prom-pct-bar">
-											<div class="prom-pct-fill" style="width: {Math.min((pct.val / Math.max(promLatency.p99, 0.001)) * 100, 100)}%"></div>
+											<div
+												class="prom-pct-fill"
+												style="width: {Math.min(
+													(pct.val / Math.max(promLatency.p99, 0.001)) * 100,
+													100
+												)}%"
+											></div>
 										</div>
-										<span class="prom-pct-val">{pct.val < 1 ? `${(pct.val * 1000).toFixed(0)}ms` : `${pct.val.toFixed(2)}s`}</span>
+										<span class="prom-pct-val"
+											>{pct.val < 1
+												? `${(pct.val * 1000).toFixed(0)}ms`
+												: `${pct.val.toFixed(2)}s`}</span
+										>
 									</div>
 								{/each}
 							</div>
@@ -1492,8 +1520,14 @@
 						<div class="prom-status-section">
 							<span class="prom-latency-title">Status Codes</span>
 							<div class="prom-status-codes">
-								{#each Object.entries(promStatusBreakdown).sort(([a], [b]) => a.localeCompare(b)) as [code, count]}
-									<div class="prom-status-chip" class:status-2xx={code.startsWith('2')} class:status-3xx={code.startsWith('3')} class:status-4xx={code.startsWith('4')} class:status-5xx={code.startsWith('5')}>
+								{#each Object.entries(promStatusBreakdown).sort( ([a], [b]) => a.localeCompare(b) ) as [code, count]}
+									<div
+										class="prom-status-chip"
+										class:status-2xx={code.startsWith('2')}
+										class:status-3xx={code.startsWith('3')}
+										class:status-4xx={code.startsWith('4')}
+										class:status-5xx={code.startsWith('5')}
+									>
 										<span class="prom-status-code">{code}</span>
 										<span class="prom-status-count">{count.toLocaleString()}</span>
 									</div>
@@ -1520,7 +1554,9 @@
 					<div class="prom-meta">
 						<span class="prom-meta-item">Pod: {promPod}</span>
 						<span class="prom-meta-item">Source: {promSource}</span>
-						<span class="prom-meta-item">Updated: {promLastUpdated}{promAgo > 0 ? ` (${promAgo}s ago)` : ''}</span>
+						<span class="prom-meta-item"
+							>Updated: {promLastUpdated}{promAgo > 0 ? ` (${promAgo}s ago)` : ''}</span
+						>
 					</div>
 				{/if}
 			</div>
@@ -1610,7 +1646,9 @@
 						<div class="prom-meta">
 							<span class="prom-meta-item">Proxy Memory: {linkerdData.memory_mb} MB</span>
 							<span class="prom-meta-item">mTLS: Active</span>
-							<span class="prom-meta-item">Updated: {linkerdLastUpdated}{linkerdAgo > 0 ? ` (${linkerdAgo}s ago)` : ''}</span>
+							<span class="prom-meta-item"
+								>Updated: {linkerdLastUpdated}{linkerdAgo > 0 ? ` (${linkerdAgo}s ago)` : ''}</span
+							>
 						</div>
 					{:else}
 						<pre class="result-pre err">{linkerdError}</pre>
@@ -3106,14 +3144,30 @@
 	.prom-status-count {
 		color: var(--text-secondary);
 	}
-	.status-2xx { border-color: var(--ok); }
-	.status-2xx .prom-status-code { color: var(--ok); }
-	.status-3xx { border-color: var(--accent); }
-	.status-3xx .prom-status-code { color: var(--accent); }
-	.status-4xx { border-color: var(--warning); }
-	.status-4xx .prom-status-code { color: var(--warning); }
-	.status-5xx { border-color: var(--danger); }
-	.status-5xx .prom-status-code { color: var(--danger); }
+	.status-2xx {
+		border-color: var(--ok);
+	}
+	.status-2xx .prom-status-code {
+		color: var(--ok);
+	}
+	.status-3xx {
+		border-color: var(--accent);
+	}
+	.status-3xx .prom-status-code {
+		color: var(--accent);
+	}
+	.status-4xx {
+		border-color: var(--warning);
+	}
+	.status-4xx .prom-status-code {
+		color: var(--warning);
+	}
+	.status-5xx {
+		border-color: var(--danger);
+	}
+	.status-5xx .prom-status-code {
+		color: var(--danger);
+	}
 
 	.prom-history {
 		display: flex;
