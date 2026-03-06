@@ -89,7 +89,7 @@ export async function startConsumer(): Promise<void> {
 			rabbitMessagesConsumed.inc();
 			log('info', 'RabbitMQ message consumed', { message: content });
 		},
-		{ noAck: true, consumerTag: 'epochcloud-sveltekit-consumer' }
+		{ noAck: true, consumerTag: 'epochcloud-demo-consumer' }
 	);
 
 	log('info', 'RabbitMQ consumer started', { queue: config.rabbitmq.queue });

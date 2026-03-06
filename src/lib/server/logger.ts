@@ -2,7 +2,7 @@ export function log(level: 'info' | 'warn' | 'error', message: string, fields: R
 	const entry = {
 		timestamp: new Date().toISOString(),
 		level,
-		service: 'epochcloud-sveltekit',
+		service: 'epochcloud-demo',
 		message,
 		...fields
 	};

@@ -1,4 +1,4 @@
-# epochcloud-sveltekit
+# epochcloud-demo
 
 SvelteKit 5 demo app for the EpochCloud Kubernetes platform — 1:1 equivalent of [epochcloud-test](https://github.com/EpochBoy/epochcloud-test) (Go).
 
@@ -28,7 +28,7 @@ SvelteKit 5 demo app for the EpochCloud Kubernetes platform — 1:1 equivalent o
 ## What's in this repo (app concerns)
 
 ```text
-epochcloud-sveltekit/
+epochcloud-demo/
 ├── Dockerfile                    # Multi-stage Node.js build
 ├── package.json                  # Dependencies
 ├── svelte.config.js              # SvelteKit + adapter-node
@@ -67,7 +67,7 @@ All deployment manifests, CI pipelines, monitoring, and promotion live in [epoch
 
 ```text
 epochcloud/
-├── kubernetes/apps/epochcloud-sveltekit/   # K8s manifests + Kargo pipeline
+├── kubernetes/apps/epochcloud-demo/   # K8s manifests + Kargo pipeline
 ├── kubernetes/infrastructure/              # Platform services (Maddy, Valkey, etc.)
 └── ...
 ```
