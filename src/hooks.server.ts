@@ -98,7 +98,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 	activeRequests.inc();
 
 	try {
-		const response = await resolve(event);
+		const response = await resolve(event, {
+			transformPageChunk: ({ html }) => {
+				if (config.rybbit.enabled) {
+					return html.replace(
+						'</head>',
+						`<script src="${config.rybbit.host}/script.js" data-site-id="${config.rybbit.siteId}" defer></script></head>`
+					);
+				}
+				return html;
+			}
+		});
 		const durationMs = performance.now() - start;
 		const durationS = durationMs / 1000;
 

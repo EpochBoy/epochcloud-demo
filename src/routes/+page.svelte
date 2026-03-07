@@ -934,9 +934,6 @@
 
 <svelte:head>
 	<title>EpochCloud</title>
-	{#if data.rybbit}
-		<script src="{data.rybbit.host}/script.js" data-site-id={data.rybbit.siteId} defer></script>
-	{/if}
 </svelte:head>
 
 <div class="dashboard">
