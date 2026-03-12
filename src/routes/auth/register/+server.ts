@@ -13,9 +13,12 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	try {
 		const body = await request.json();
+		const origin = request.headers.get('Origin');
+		const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+		if (origin) headers['Origin'] = origin;
 		const resp = await fetch(`${config.betterauth.url}/api/auth/sign-up/email`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers,
 			body: JSON.stringify(body),
 			signal: AbortSignal.timeout(10000)
 		});

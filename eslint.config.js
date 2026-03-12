@@ -30,6 +30,7 @@ export default [
         process: "readonly",
         Buffer: "readonly",
         AbortController: "readonly",
+        AbortSignal: "readonly",
         URLSearchParams: "readonly",
         performance: "readonly",
         window: "readonly",
