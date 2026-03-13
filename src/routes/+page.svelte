@@ -847,7 +847,11 @@
 		'SeaweedFS S3',
 		'RabbitMQ',
 		'Valkey Cache',
-		'CrowdSec Threat Intel'
+		'CrowdSec Threat Intel',
+		'Maddy SMTP',
+		'BetterAuth + Hono',
+		'Resend Email',
+		'Knative Serving'
 	];
 
 	const stackReview = [
@@ -857,12 +861,8 @@
 		'Falcosidekick',
 		'DefectDojo',
 		'Rybbit Analytics',
-		'Knative Serving',
 		'Sigma LogQL',
-		'Maddy SMTP',
-		'BetterAuth + Hono',
-		'GO Feature Flag',
-		'Resend Email'
+		'GO Feature Flag'
 	];
 
 	const stackPending = ['Cluster Honeypot'];
