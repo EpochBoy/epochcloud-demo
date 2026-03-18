@@ -100,11 +100,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 	try {
 		const response = await resolve(event, {
 			transformPageChunk: ({ html }) => {
-				// Inject Rybbit analytics script
+				// Inject Rybbit analytics script via first-party proxy (/_a/ path)
+				// to bypass ad blockers that block "analytics.*" domains.
+				// The /_a/ prefix is rewritten to /api/ by Traefik middleware
+				// and forwarded to the Rybbit backend. Same-origin requests
+				// are indistinguishable from regular app traffic.
 				if (config.rybbit.enabled) {
 					html = html.replace(
 						'</head>',
-						`<script src="${config.rybbit.host}/api/script.js" data-site-id="${config.rybbit.siteId}" defer></script></head>`
+						`<script src="/_a/script.js" data-site-id="${config.rybbit.siteId}" defer></script></head>`
 					);
 				}
 				// Inject Faro config meta tag for client-side SDK initialization
