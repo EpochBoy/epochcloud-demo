@@ -112,5 +112,12 @@ export const config = {
 		get enabled() {
 			return !!env.CROWDSEC_LAPI_URL;
 		}
+	},
+
+	// Grafana Faro frontend observability
+	faro: {
+		get enabled() {
+			return env.FARO_ENABLED === 'true';
+		}
 	}
 };

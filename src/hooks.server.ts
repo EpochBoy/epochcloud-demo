@@ -100,10 +100,18 @@ export const handle: Handle = async ({ event, resolve }) => {
 	try {
 		const response = await resolve(event, {
 			transformPageChunk: ({ html }) => {
+				// Inject Rybbit analytics script
 				if (config.rybbit.enabled) {
-					return html.replace(
+					html = html.replace(
 						'</head>',
 						`<script src="${config.rybbit.host}/api/script.js" data-site-id="${config.rybbit.siteId}" defer></script></head>`
+					);
+				}
+				// Inject Faro config meta tag for client-side SDK initialization
+				if (config.faro.enabled) {
+					html = html.replace(
+						'</head>',
+						`<meta name="faro-config" content='${JSON.stringify({ enabled: true, version: config.version, environment: config.environment })}' /></head>`
 					);
 				}
 				return html;

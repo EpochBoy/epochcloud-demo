@@ -862,7 +862,8 @@
 		'DefectDojo',
 		'Rybbit Analytics',
 		'Sigma LogQL',
-		'GO Feature Flag'
+		'GO Feature Flag',
+		'Grafana Faro (Web Vitals)'
 	];
 
 	const stackPending = ['Cluster Honeypot'];

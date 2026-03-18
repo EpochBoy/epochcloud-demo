@@ -24,6 +24,8 @@ SvelteKit 5 demo app for the EpochCloud Kubernetes platform.
 - **BetterAuth** client SDK (connects to standalone auth server)
 - **Structured logging** (JSON via custom logger)
 - **Consumer mode** (KEDA-scaled queue consumer)
+- **Rybbit** web analytics (siteId synced from infrastructure)
+- **Grafana Faro** - Web Vitals (LCP, CLS, INP, TTFB), JS errors, browser traces via `@grafana/faro-web-sdk`
 
 ## What's in this repo (app concerns)
 

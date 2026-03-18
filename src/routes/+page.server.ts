@@ -25,6 +25,7 @@ export const load: PageServerLoad = async ({ url }) => {
 			ntfy: config.ntfy.enabled,
 			knative: config.knative.enabled,
 			crowdsec: config.crowdsec.enabled
-		}
+		},
+		faro: config.faro.enabled
 	};
 };
