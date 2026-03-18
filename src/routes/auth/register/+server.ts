@@ -19,7 +19,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const resp = await fetch(`${config.betterauth.url}/api/auth/sign-up/email`, {
 			method: 'POST',
 			headers,
-			body: JSON.stringify(body),
+			body: JSON.stringify({ ...body, callbackURL: origin || '/' }),
 			signal: AbortSignal.timeout(10000)
 		});
 
