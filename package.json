@@ -19,7 +19,7 @@
     "@sveltejs/kit": "^2.21.1",
     "@sveltejs/vite-plugin-svelte": "^5.1.0",
     "@types/amqplib": "^0.10.7",
-    "@types/nodemailer": "^6.4.17",
+    "@types/nodemailer": "^8.0.0",
     "eslint": "latest",
     "eslint-config-prettier": "latest",
     "eslint-plugin-svelte": "latest",
@@ -43,7 +43,7 @@
     "amqplib": "^0.10.7",
     "better-auth": "^1.2.8",
     "ioredis": "^5.6.1",
-    "nodemailer": "^7.0.3",
+    "nodemailer": "^8.0.0",
     "prom-client": "^15.1.3"
   }
 }
