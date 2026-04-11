@@ -1,5 +1,5 @@
 # Build stage
-FROM docker.io/library/node:22-alpine AS builder
+FROM docker.io/library/node:25-alpine@sha256:ad82ecad30371c43f4057aaa4800a8ed88f9446553a2d21323710c7b937177fc AS builder
 
 # Enable corepack for pnpm
 RUN corepack enable && corepack prepare pnpm@9 --activate
@@ -30,7 +30,7 @@ RUN pnpm build
 RUN pnpm prune --prod
 
 # Runtime stage
-FROM docker.io/library/node:22-alpine
+FROM docker.io/library/node:25-alpine@sha256:ad82ecad30371c43f4057aaa4800a8ed88f9446553a2d21323710c7b937177fc
 
 # Install ca-certificates for HTTPS
 RUN apk --no-cache add ca-certificates
