@@ -25,6 +25,7 @@
 		'Semgrep + Trivy',
 		'OWASP ZAP',
 		'Headlamp',
+		'kubernetes-reflector',
 		'Renovate',
 		'ArgoCD Image Updater',
 		'Kargo Promotions',
