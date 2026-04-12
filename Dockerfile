@@ -2,15 +2,18 @@
 FROM docker.io/library/node:25-alpine@sha256:ad82ecad30371c43f4057aaa4800a8ed88f9446553a2d21323710c7b937177fc AS builder
 
 # Enable corepack for pnpm (corepack unbundled in Node 25+, --force needed to overwrite existing shims)
-RUN npm install -g corepack --force && corepack enable && corepack prepare pnpm@9 --activate
+RUN npm install -g corepack --force && corepack enable
 
 WORKDIR /app
 
 # Copy package files
 COPY package.json pnpm-lock.yaml* ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install the exact pnpm version from packageManager field in package.json
+RUN corepack install
+
+# Install dependencies (no --frozen-lockfile: survives Renovate lockfile lag between packageManager bumps)
+RUN pnpm install
 
 # Copy source
 COPY . .
