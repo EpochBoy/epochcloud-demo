@@ -1,8 +1,8 @@
 # Build stage
 FROM docker.io/library/node:25-alpine@sha256:ad82ecad30371c43f4057aaa4800a8ed88f9446553a2d21323710c7b937177fc AS builder
 
-# Enable corepack for pnpm
-RUN corepack enable && corepack prepare pnpm@9 --activate
+# Enable corepack for pnpm (corepack unbundled in Node 25+)
+RUN npm install -g corepack && corepack enable && corepack prepare pnpm@9 --activate
 
 WORKDIR /app
 
