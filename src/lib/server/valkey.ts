@@ -18,7 +18,9 @@ export async function initValkey(): Promise<void> {
 			password: config.valkey.password || undefined,
 			db: config.valkey.database,
 			retryStrategy: (times) => {
-				if (times > 5) return null; // Stop retrying after 5 attempts
+				// Retry indefinitely with exponential backoff capped at 30s.
+				// Kubernetes services always come back; giving up permanently after N
+				// retries would leave the app broken until the next pod restart.
 				return Math.min(times * 1000, 30000);
 			},
 			lazyConnect: true
