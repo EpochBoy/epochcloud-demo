@@ -1,7 +1,12 @@
 import Redis from 'ioredis';
 import { config } from './config.js';
 import { log } from './logger.js';
-import { valkeyConnected, valkeyCacheHits, valkeyCacheMisses, valkeyOperations } from './metrics.js';
+import {
+	valkeyConnected,
+	valkeyCacheHits,
+	valkeyCacheMisses,
+	valkeyOperations
+} from './metrics.js';
 
 let client: Redis | null = null;
 
