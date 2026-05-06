@@ -57,13 +57,13 @@
 		'Grafana Faro (Web Vitals)',
 		'Falco Runtime',
 		'Falcosidekick',
-		'DefectDojo'
+		'DefectDojo',
+		'Loki Ruler (LogQL)'
 	];
 
 	const stackReview = [
 		'LitmusChaos',
-		'fail2ban',
-		'Sigma LogQL'
+		'fail2ban'
 	];
 
 	const stackPending = ['Cluster Honeypot'];
