@@ -43,6 +43,17 @@ export const config = {
 		}
 	},
 
+	// CNPG (CloudNative-PG / Postgres)
+	// DATABASE_URL is the CNPG-generated `fqdn-uri` from the
+	// `<cluster>-app` Secret (see kubernetes/apps/epochcloud-demo/base/
+	// templates/cnpg-cluster.yaml). Includes user/pass/host/db/sslmode.
+	cnpg: {
+		url: env.DATABASE_URL || '',
+		get enabled() {
+			return !!env.DATABASE_URL;
+		}
+	},
+
 	// DefectDojo
 	defectdojo: {
 		url: env.DEFECTDOJO_URL || '',

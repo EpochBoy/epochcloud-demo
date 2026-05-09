@@ -12,6 +12,7 @@
 	const tabs = [
 		{ id: 'rabbitmq', label: 'RabbitMQ', statusKey: 'rabbitmq' },
 		{ id: 'valkey', label: 'Valkey', statusKey: 'valkey' },
+		{ id: 'cnpg', label: 'CNPG', statusKey: 'cnpg' },
 		{ id: 'email', label: 'Email', statusKey: null },
 		{ id: 'betterauth', label: 'BetterAuth', statusKey: 'betterauth' },
 		{ id: 'crowdsec', label: 'CrowdSec', statusKey: 'crowdsec' },

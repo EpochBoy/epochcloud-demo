@@ -9,6 +9,7 @@ import {
 } from '$lib/server/metrics.js';
 import { initRabbitMQ, startConsumer } from '$lib/server/rabbitmq.js';
 import { initValkey } from '$lib/server/valkey.js';
+import { initCnpg } from '$lib/server/cnpg.js';
 import { initDefectDojo } from '$lib/server/defectdojo.js';
 import { initSmtp } from '$lib/server/smtp.js';
 
@@ -42,6 +43,7 @@ async function init() {
 	// Initialize service connections
 	await initRabbitMQ();
 	await initValkey();
+	await initCnpg();
 	await initDefectDojo();
 	initSmtp();
 

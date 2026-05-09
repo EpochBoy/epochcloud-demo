@@ -91,6 +91,27 @@ export const valkeyConnected = new client.Gauge({
 	registers: [registry]
 });
 
+// CNPG metrics
+export const cnpgConnected = new client.Gauge({
+	name: 'epochcloud_cnpg_connected',
+	help: 'CNPG/Postgres connection status (1=connected, 0=disconnected)',
+	registers: [registry]
+});
+
+export const cnpgOperations = new client.Counter({
+	name: 'epochcloud_cnpg_operations_total',
+	help: 'Total CNPG/Postgres operations',
+	labelNames: ['op'] as const,
+	registers: [registry]
+});
+
+export const cnpgErrors = new client.Counter({
+	name: 'epochcloud_cnpg_errors_total',
+	help: 'Total CNPG/Postgres errors',
+	labelNames: ['op'] as const,
+	registers: [registry]
+});
+
 // DefectDojo metrics
 export const defectdojoRequests = new client.Counter({
 	name: 'epochcloud_defectdojo_api_requests_total',

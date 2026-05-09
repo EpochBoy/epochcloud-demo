@@ -18,6 +18,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		features: {
 			rabbitmq: config.rabbitmq.enabled,
 			valkey: config.valkey.enabled,
+			cnpg: config.cnpg.enabled,
 			defectdojo: config.defectdojo.enabled,
 			smtp: config.smtp.enabled,
 			betterauth: config.betterauth.enabled,

@@ -8,6 +8,7 @@
 	import Footer from './components/Footer.svelte';
 	import RabbitMqDemo from './components/demos/RabbitMqDemo.svelte';
 	import ValkeyDemo from './components/demos/ValkeyDemo.svelte';
+	import CnpgDemo from './components/demos/CnpgDemo.svelte';
 	import EmailDemo from './components/demos/EmailDemo.svelte';
 	import BetterAuthDemo from './components/demos/BetterAuthDemo.svelte';
 	import CrowdSecDemo from './components/demos/CrowdSecDemo.svelte';
@@ -29,6 +30,7 @@
 		const checks = [
 			{ key: 'rabbitmq', url: '/rabbitmq/status' },
 			{ key: 'valkey', url: '/cache/status' },
+			{ key: 'cnpg', url: '/cnpg/status' },
 			{ key: 'betterauth', url: '/auth/status' },
 			{ key: 'crowdsec', url: '/crowdsec/status' },
 			{ key: 'defectdojo', url: '/defectdojo/status' },
@@ -70,7 +72,7 @@
 	<section class="section">
 		<div class="section-head">
 			<h2 class="section-title">Live Demos</h2>
-			<span class="count-badge">12</span>
+			<span class="count-badge">13</span>
 		</div>
 
 		<DemoTabs {activeDemo} {statuses} onSelect={(id) => (activeDemo = id)} />
@@ -79,6 +81,8 @@
 			<RabbitMqDemo enabled={data.features.rabbitmq} />
 		{:else if activeDemo === 'valkey'}
 			<ValkeyDemo enabled={data.features.valkey} />
+		{:else if activeDemo === 'cnpg'}
+			<CnpgDemo enabled={data.features.cnpg} environment={data.environment} />
 		{:else if activeDemo === 'email'}
 			<EmailDemo enabled={data.features.smtp} />
 		{:else if activeDemo === 'betterauth'}
