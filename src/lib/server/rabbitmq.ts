@@ -46,7 +46,15 @@ async function connect(): Promise<void> {
 		});
 
 		channel = await connection.createChannel();
-		await channel.assertQueue(config.rabbitmq.queue, { durable: true, autoDelete: false });
+		// checkQueue, not assertQueue: the queue is owned by the
+		// rabbitmq.com Topology Operator (Queue CR in
+		// kubernetes/apps/epochcloud-demo/templates/rabbitmq-demo.yaml).
+		// assertQueue would re-declare with default args (classic queue,
+		// no x-queue-type) — when the operator's Queue is `type: quorum`
+		// the type-mismatch fails the channel with PRECONDITION_FAILED.
+		// checkQueue only verifies existence; the operator stays the
+		// single source of truth for queue type / durability / args.
+		await channel.checkQueue(config.rabbitmq.queue);
 
 		rabbitConnected.set(1);
 		backoffMs = 1000;
