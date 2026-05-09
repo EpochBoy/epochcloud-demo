@@ -6,8 +6,10 @@ RUN npm install -g corepack --force && corepack enable
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
+# Copy package files. pnpm-workspace.yaml is required for pnpm 11+ —
+# it holds the `allowBuilds` decisions without which `pnpm install`
+# hard-fails in non-TTY (CI) with ERR_PNPM_IGNORED_BUILDS.
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 
 # Install the exact pnpm version from packageManager field in package.json
 RUN corepack install
