@@ -26,6 +26,7 @@
 		'OWASP ZAP',
 		'Headlamp',
 		'kubernetes-reflector',
+		'Reloader',
 		'Renovate',
 		'ArgoCD Image Updater',
 		'Kargo Promotions',
