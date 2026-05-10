@@ -1,7 +1,7 @@
 <script lang="ts">
 	const stackOnline = [
 		'Proxmox VE + OpenTofu',
-		'Talos OS + K8s 1.35',
+		'Talos OS + K8s 1.36',
 		'Karpenter',
 		'Cilium + Hubble',
 		'WireGuard Encryption',
@@ -66,7 +66,7 @@
 		'fail2ban'
 	];
 
-	const stackPending = ['Cluster Honeypot'];
+	const stackPending = ['Cluster Honeypot', 'Kanister (data-recovery drills)'];
 
 	const total = stackOnline.length + stackReview.length + stackPending.length;
 </script>
